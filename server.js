@@ -1,6 +1,6 @@
 const inquirer = require('inquirer');
-const mysql = require('require');
-require('console.table');
+const mysql = require('mysql');
+const consoletable = require('console.table');
 
 let connection = mysql.createConnection({
     host: "localhost",
@@ -13,8 +13,29 @@ let connection = mysql.createConnection({
 connection.connect(function (err) {
     if (err) throw err;
     console.log('Connected to the grid');
+    titleLogger();
     init();
 });
+
+function titleLogger() {
+    console.log(`
+    _______  __   __  _______  ___      _______  __   __  _______  _______ 
+   |       ||  |_|  ||       ||   |    |       ||  | |  ||       ||       |
+   |    ___||       ||    _  ||   |    |   _   ||  |_|  ||    ___||    ___|
+   |   |___ |       ||   |_| ||   |    |  | |  ||       ||   |___ |   |___ 
+   |    ___||       ||    ___||   |___ |  |_|  ||_     _||    ___||    ___|
+   |   |___ | ||_|| ||   |    |       ||       |  |   |  |   |___ |   |___ 
+   |_______||_|   |_||___|    |_______||_______|  |___|  |_______||_______|
+    _______  ______    _______  _______  ___   _  _______  ______          
+   |       ||    _ |  |   _   ||       ||   | | ||       ||    _ |         
+   |_     _||   | ||  |  |_|  ||       ||   |_| ||    ___||   | ||         
+     |   |  |   |_||_ |       ||       ||      _||   |___ |   |_||_        
+     |   |  |    __  ||       ||      _||     |_ |    ___||    __  |       
+     |   |  |   |  | ||   _   ||     |_ |    _  ||   |___ |   |  | |       
+     |___|  |___|  |_||__| |__||_______||___| |_||_______||___|  |_|  
+     
+     `)
+};                                              
 
 const init = () => {
     inquirer.prompt({
@@ -121,5 +142,6 @@ function removeEmployee() {
 };
 
 function exit() {
-
+    console.log('Exiting... Goodbye!');
+    connection.end();
 };

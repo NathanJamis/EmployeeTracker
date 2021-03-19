@@ -142,7 +142,18 @@ function addEmployee() {
 };
 
 function addDepartment() {
-
+    inquirer.prompt({
+        name: 'deptName',
+        type: 'input',
+        message: 'What is the department name?'
+    }).then((answer) => {
+        connection.query(`INSERT INTO department (name) VALUES ('${answer.deptName})`,
+        (err, res) => {
+            if (err) throw err;
+            console.log('Department has been added');
+            init();
+        })
+    })
 };
 
 function addRole() {

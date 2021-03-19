@@ -146,7 +146,39 @@ function addDepartment() {
 };
 
 function addRole() {
-
+    let query = `SELECT * FROM department`;
+    connection.query(query, (err, res) => {
+        if (err) throw err;
+        inquirer.prompt([
+            {
+                name: 'title',
+                type: 'input',
+                message: 'What is the title of the role?'
+            },
+            {
+                name: 'salary',
+                type: 'input',
+                message: 'What is the salary of the role?'
+            },
+            {
+                name: 'department_id',
+                type: 'list',
+                message: 'What department is the role under?',
+                choices: res.map(choice => choice.name)
+            }
+        ]).then((answer) => {
+            connection.query(`INSERT INTO role (title,salary,department_id)
+            VALUES (
+            '${answer.title}',
+            '${answer.salary},
+            (SELECT id FROM department WHERE name = '${answer.department_id}'));`,
+            (err, res) => {
+                if (err) throw err;
+                console.log('Role has been added.');
+                init();
+            });
+        });
+    })
 };
 
 function updateRole() {

@@ -213,7 +213,7 @@ function addRole() {
             connection.query(`INSERT INTO role (title,salary,department_id)
             VALUES (
             '${answer.title}',
-            '${answer.salary},
+            '${answer.salary}',
             (SELECT id FROM department WHERE name = '${answer.department_id}'));`,
             (err, res) => {
                 if (err) throw err;
@@ -269,7 +269,7 @@ function removeEmployee() {
                 name: 'employee_id',
                 type: 'list',
                 message: 'Choose an employee to remove:',
-                choices: res[0].map(choice => choice.full_name)
+                choices: res.map(choice => choice.full_name)
             }
         ]).then((answer) => {
             connection.query(`DELETE FROM employee

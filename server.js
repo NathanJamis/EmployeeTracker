@@ -96,25 +96,45 @@ const init = () => {
 }
 
 function viewAll() {
-    connection.query(
-
-    )
+    let query = `SELECT 
+    employee.id, 
+    first_name AS 'First name', 
+    last_name AS 'Last name', 
+    role.title AS 'Role', 
+    role.salary AS 'Salary', 
+    department.name AS 'Department' 
+    FROM employee
+    JOIN role ON role.id = employee.role_id
+    JOIN department ON department.id = role.department_id;`;
+    console.log('Viewing all employees\n');    
+    connection.query(query, (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        init();
+    })
 };
 
-function viewByManager() {
-    connection.query(
-        
-    )
-};
+// function viewByManager() {};
 
 function viewDepartments() {
-    connection.query(
-        
-    )
+    let query = `SELECT * FROM department`;
+    console.log('Showing departments\n');
+    connection.query(query, (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        init();
+    });
 }; 
 
 function viewRoles() {
-
+    let query = `SELECT role.title, role.salary, department.name FROM role
+    INNER JOIN department ON department.id = role.department_id;`;
+    console.log('Showing roles\n');
+    connection.query(query, (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        init();
+    });
 };
 
 function addEmployee() {
@@ -130,16 +150,38 @@ function addRole() {
 };
 
 function updateRole() {
-
+    let query = `SELECT CONCAT(first_name, " ", last_name) AS full_name from employee;
+    SELECT * FROM role;`;
+    connection.query(query, (err, res) => {
+        if (err) throw err;
+        inquirer.prompt([
+            {
+                name: 'employee_id',
+                type: 'list',
+                message: 'Select an employee to update:',
+                choices: res[0].map(choice => choice.full_name)
+            },
+            {
+                name: 'newRole',
+                type: 'list',
+                message: 'Select a new role for employee:',
+                choices: res[1].map(choice => choice.title)
+            }
+        ]).then((answer) => {
+            connection.query(`UPDATE employee
+            SET role_id = (SELECT role.id FROM role WHERE title = '${answer.newRole}')
+            WHERE id = (SELECT id FROM employee WHERE CONCAT(first_name, " ", last_name) = '${answer.employee_id}')`,
+            (err, res) => {
+                if (err) throw err;
+                console.log('Employee updated.');
+            })
+        })
+    })
 };
 
-function updateManager() {
+// function updateManager() {};
 
-};
-
-function removeEmployee() {
-
-};
+// function removeEmployee() {};
 
 function exit() {
     console.log('Exiting... Goodbye!');

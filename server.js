@@ -138,7 +138,39 @@ function viewRoles() {
 };
 
 function addEmployee() {
-
+    let query = `SELECT * FROM role;`;
+    connection.query(query, (err, res) => {
+        if (err) throw err;
+        inquirer.prompt([
+            {
+                name: 'firstName',
+                type: 'input',
+                message: 'First name of employee?'
+            },
+            {
+                name: 'lastName',
+                type: 'input',
+                message: 'Last name of employee?'
+            },
+            {
+                name: 'role',
+                type: 'list',
+                message: 'Role of employee?',
+                choices: res.map(choice => choice.title)
+            }
+        ]).then((answer) => {
+            connection.query(`INSERT INTO employee (first_name,last_name,role_id)
+            VALUES (
+            '${answer.firstName}',
+            '${answer.lastName}',
+            (SELECT id FROM role WHERE title = '${answer.role}'));`,
+            (err, res) => {
+                if (err) throw err;
+                console.log('Employe has been added.\n');
+                init();
+            });
+        });
+    })
 };
 
 function addDepartment() {
@@ -152,7 +184,7 @@ function addDepartment() {
             if (err) throw err;
             console.log('Department has been added');
             init();
-        })
+        });
     })
 };
 

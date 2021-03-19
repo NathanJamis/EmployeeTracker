@@ -44,14 +44,14 @@ const init = () => {
         message: 'What would you like to do?',
         choices: [
             'View all employees',
-            'View employees by manager',
+            //'View employees by manager',
             'View departments',
             'View roles',
             'Add employee',
             'Add department',
             'Add role',
             'Update employee role',
-            'Update employee manager',
+            //'Update employee manager',
             'Remove employee',
             'Exit'
         ]
@@ -61,9 +61,9 @@ const init = () => {
             case 'View all employees':
                 viewAll();
                 break;
-            case 'View employees by manager':
-                viewByManager();
-                break;
+            //case 'View employees by manager':
+               // viewByManager();
+               // break;
             case 'View departments':
                 viewDepartments();
                 break;
@@ -82,9 +82,9 @@ const init = () => {
             case 'Update employee role':
                 updateRole();
                 break;
-            case 'Update employee manager':
-                updateManager();
-                break;
+            //case 'Update employee manager':
+                //updateManager();
+                //break;
             case 'Remove employee':
                 removeEmployee();
                 break;
@@ -225,7 +225,7 @@ function addRole() {
 };
 
 function updateRole() {
-    let query = `SELECT CONCAT(first_name, " ", last_name) AS full_name from employee;
+    let query = `SELECT CONCAT(first_name, " ", last_name) AS full_name FROM employee;
     SELECT * FROM role;`;
     connection.query(query, (err, res) => {
         if (err) throw err;
@@ -249,14 +249,34 @@ function updateRole() {
             (err, res) => {
                 if (err) throw err;
                 console.log('Employee updated.');
-            })
-        })
+            });
+        });
     })
 };
 
 // function updateManager() {};
 
-// function removeEmployee() {};
+function removeEmployee() {
+    let query = `SELECT CONCAT(first_name, " ", last_name) AS full_name FROM employee;`;
+    connection.query(query, (err, res) => {
+        if (err) throw err;
+        inquirer.prompt([
+            {
+                name: 'employee_id',
+                type: 'list',
+                message: 'Choose an employee to remove:',
+                choices: res[0].map(choice => choice.full_name)
+            }
+        ]).then((answer) => {
+            connection.query(`DELETE FROM employee
+            WHERE id = (SELECT id FROM employee WHERE CONCAT(first_name, " ", last_name) = '${answer.employee_id}')`,
+            (err, res) => {
+                if (err) throw err;
+                console.log('Employee has been removed.')
+            });
+        });
+    })
+};
 
 function exit() {
     console.log('Exiting... Goodbye!');

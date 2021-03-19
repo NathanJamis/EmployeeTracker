@@ -179,7 +179,7 @@ function addDepartment() {
         type: 'input',
         message: 'What is the department name?'
     }).then((answer) => {
-        connection.query(`INSERT INTO department (name) VALUES ('${answer.deptName})`,
+        connection.query(`INSERT INTO department (name) VALUES ('${answer.deptName}')`,
         (err, res) => {
             if (err) throw err;
             console.log('Department has been added');

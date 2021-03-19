@@ -245,13 +245,13 @@ function updateRole() {
                 }
             ])
             .then((answer) => {
-                connection.query(`UPDATE employee
-                        SET role_id = (SELECT role.id FROM role WHERE title = '${answer.newRole}')
-                        WHERE id = (SELECT id FROM employee WHERE CONCAT(first_name, " ", last_name) = '${answer.employee_id}')`,
-                        (err, res) => {
-                            if (err) throw err;
-                            console.log('Employee role updated.')
-                        });
+                connection.query(`UPDATE employee SET role_id = ? WHERE id = ?`,
+                [answer.newRole, answer.employee_id], 
+                function(err) {
+                    if (err) throw err;
+                    console.log('Employee role has been updated');
+                    init();
+                });
             });
         })
     })
@@ -277,6 +277,7 @@ function removeEmployee() {
             (err, res) => {
                 if (err) throw err;
                 console.log('Employee has been removed.')
+                init();
             });
         });
     })
